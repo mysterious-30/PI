@@ -34,6 +34,14 @@ export const updateUserRole = createAsyncThunk(
   }
 );
 
+export const toggleFavoriteTool = createAsyncThunk(
+  'user/toggleFavoriteTool',
+  async (toolId) => {
+    const response = await api.post(`/user/favorites/${toolId}`);
+    return response.data;
+  }
+);
+
 export const updateUserPreferences = createAsyncThunk(
   'user/updateUserPreferences',
   async (preferences) => {
@@ -99,8 +107,15 @@ const userSlice = createSlice({
           state.users[index] = action.payload;
         }
       })
+      .addCase(toggleFavoriteTool.fulfilled, (state, action) => {
+        if (state.profile) {
+          state.profile.favorites = action.payload.favorites;
+        }
+      })
       .addCase(updateUserPreferences.fulfilled, (state, action) => {
-        state.profile = { ...state.profile, preferences: action.payload };
+        if (state.profile) {
+          state.profile.preferences = action.payload;
+        }
       })
       .addCase(logout.fulfilled, (state) => {
         state.profile = null;

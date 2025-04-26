@@ -1,13 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import toolsReducer from './slices/toolsSlice';
 import userReducer from './slices/userSlice';
-import uiReducer from './slices/uiSlice';
+import analyticsReducer from './slices/analyticsSlice';
 
 export const store = configureStore({
   reducer: {
     tools: toolsReducer,
     user: userReducer,
-    ui: uiReducer
+    analytics: analyticsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

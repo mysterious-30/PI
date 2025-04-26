@@ -34,6 +34,30 @@ export const searchTools = createAsyncThunk(
   }
 );
 
+export const deleteTool = createAsyncThunk(
+  'tools/deleteTool',
+  async (toolId) => {
+    await api.delete(`/admin/tools/${toolId}`);
+    return toolId;
+  }
+);
+
+export const createTool = createAsyncThunk(
+  'tools/createTool',
+  async (toolData) => {
+    const response = await api.post('/admin/tools', toolData);
+    return response.data;
+  }
+);
+
+export const updateTool = createAsyncThunk(
+  'tools/updateTool',
+  async ({ toolId, ...toolData }) => {
+    const response = await api.put(`/admin/tools/${toolId}`, toolData);
+    return response.data;
+  }
+);
+
 export const trackToolUsage = createAsyncThunk(
   'tools/trackToolUsage',
   async (toolId) => {
@@ -113,6 +137,21 @@ const toolsSlice = createSlice({
       .addCase(searchTools.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      // Delete tool
+      .addCase(deleteTool.fulfilled, (state, action) => {
+        state.items = state.items.filter(tool => tool._id !== action.payload);
+      })
+      // Create tool
+      .addCase(createTool.fulfilled, (state, action) => {
+        state.items.push(action.payload);
+      })
+      // Update tool
+      .addCase(updateTool.fulfilled, (state, action) => {
+        const index = state.items.findIndex(tool => tool._id === action.payload._id);
+        if (index !== -1) {
+          state.items[index] = action.payload;
+        }
       });
   }
 });

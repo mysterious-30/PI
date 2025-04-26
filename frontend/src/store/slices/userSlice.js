@@ -10,6 +10,30 @@ export const fetchUserProfile = createAsyncThunk(
   }
 );
 
+export const fetchUsers = createAsyncThunk(
+  'user/fetchUsers',
+  async () => {
+    const response = await api.get('/admin/users');
+    return response.data;
+  }
+);
+
+export const deleteUser = createAsyncThunk(
+  'user/deleteUser',
+  async (userId) => {
+    await api.delete(`/admin/users/${userId}`);
+    return userId;
+  }
+);
+
+export const updateUserRole = createAsyncThunk(
+  'user/updateUserRole',
+  async ({ userId, role }) => {
+    const response = await api.put(`/admin/users/${userId}/role`, { role });
+    return response.data;
+  }
+);
+
 export const updateUserPreferences = createAsyncThunk(
   'user/updateUserPreferences',
   async (preferences) => {
@@ -30,6 +54,7 @@ const userSlice = createSlice({
   name: 'user',
   initialState: {
     profile: null,
+    users: [],
     loading: false,
     error: null
   },
@@ -52,6 +77,27 @@ const userSlice = createSlice({
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(fetchUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload;
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.users = state.users.filter(user => user.id !== action.payload);
+      })
+      .addCase(updateUserRole.fulfilled, (state, action) => {
+        const index = state.users.findIndex(user => user.id === action.payload.id);
+        if (index !== -1) {
+          state.users[index] = action.payload;
+        }
       })
       .addCase(updateUserPreferences.fulfilled, (state, action) => {
         state.profile = { ...state.profile, preferences: action.payload };

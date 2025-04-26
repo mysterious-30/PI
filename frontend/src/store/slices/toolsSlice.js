@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '../../config/api';
 
 // Async thunks
 export const fetchTools = createAsyncThunk(
   'tools/fetchTools',
   async () => {
-    const response = await axios.get('/api/tools');
+    const response = await api.get('/tools');
     return response.data;
   }
 );
@@ -13,7 +13,7 @@ export const fetchTools = createAsyncThunk(
 export const fetchToolBySlug = createAsyncThunk(
   'tools/fetchToolBySlug',
   async (slug) => {
-    const response = await axios.get(`/api/tools/${slug}`);
+    const response = await api.get(`/tools/${slug}`);
     return response.data;
   }
 );
@@ -21,7 +21,7 @@ export const fetchToolBySlug = createAsyncThunk(
 export const fetchToolsByCategory = createAsyncThunk(
   'tools/fetchToolsByCategory',
   async (category) => {
-    const response = await axios.get(`/api/tools/category/${category}`);
+    const response = await api.get(`/tools/category/${category}`);
     return response.data;
   }
 );
@@ -29,7 +29,7 @@ export const fetchToolsByCategory = createAsyncThunk(
 export const searchTools = createAsyncThunk(
   'tools/searchTools',
   async (query) => {
-    const response = await axios.get(`/api/tools/search?q=${query}`);
+    const response = await api.get(`/tools/search?q=${query}`);
     return response.data;
   }
 );
@@ -37,7 +37,7 @@ export const searchTools = createAsyncThunk(
 export const trackToolUsage = createAsyncThunk(
   'tools/trackToolUsage',
   async (toolId) => {
-    const response = await axios.post(`/api/analytics/track-usage/${toolId}`);
+    const response = await api.post(`/analytics/track-usage/${toolId}`);
     return response.data;
   }
 );
